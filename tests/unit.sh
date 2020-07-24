@@ -19,6 +19,22 @@ testSetsEnvVarsFromTextFile () {
 	assertSame 'foo' "$DB"
 }
 
+testCreatesARandomString () {
+	local LENGTH=5
+	local RANDOM_STRING="$( gaea-random-string $LENGTH )"
+	
+	assertNotNull "$RANDOM_STRING"
+}
+
+testFindsNewDatabaseAdnUserNames () {
+	gaea-db-create 'foo' 'bar' '12345678a-zA-Z'
+	DB_NAME="$( gaea-db-new )"
+
+	IS_ALREADY_A_DB_THERE=$( mysql -u root --skip-column-names -e "SELECT CASE WHEN EXISTS ( SELECT * FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '$DB_NAME' ) THEN '0' ELSE '1' END" )
+
+	assertFalse "A database with that name already exists" "$IS_ALREADY_A_DB_THERE"
+}
+
 testCreatesDatabaseAndUser () {
 	local DB_NAME=foo
 	local DB_USER=bar
@@ -38,8 +54,14 @@ testCreatesDatabaseAndUser () {
 	assertTrue "The database user wasn't created" "$IS_DBUSER_CREATED"
 	assertContains "The database user hasn't required permissions" "$DB_USER_PERMS" "$DB_PERMS"
 
-	mysql -u root -e "DROP DATABASE $DB_NAME"
-	mysql -u root -e "DROP USER $DB_USER@localhost"
+}
+
+oneTimeTearDown () {
+	local DB_NAME='foo'
+	local DB_USER='bar'
+
+	mysql -u root -e "DROP DATABASE IF EXISTS $DB_NAME"
+	mysql -u root -e "DROP USER IF EXISTS $DB_USER@localhost"
 }
 
 # Load shUnit2
