@@ -27,10 +27,11 @@ testCreatesARandomString () {
 }
 
 testFindsNewDatabaseAdnUserNames () {
-	gaea-db-create 'foo' 'bar' '12345678a-zA-Z'
-	DB_NAME="$( gaea-db-new )"
+	gaea-db-new
+	gaea-set-envars "/tmp/db-credentials.txt"
 
-	IS_ALREADY_A_DB_THERE=$( mysql -u root --skip-column-names -e "SELECT CASE WHEN EXISTS ( SELECT * FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '$DB_NAME' ) THEN '0' ELSE '1' END" )
+	# Is that database name already in use?
+	local IS_ALREADY_A_DB_THERE=$( mysql -u root --skip-column-names -e "SELECT CASE WHEN EXISTS ( SELECT * FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '$DB_NAME' ) THEN '0' ELSE '1' END" )
 
 	assertFalse "A database with that name already exists" "$IS_ALREADY_A_DB_THERE"
 }
@@ -54,6 +55,15 @@ testCreatesDatabaseAndUser () {
 	assertTrue "The database user wasn't created" "$IS_DBUSER_CREATED"
 	assertContains "The database user hasn't required permissions" "$DB_USER_PERMS" "$DB_PERMS"
 
+}
+
+testCopiesApacheConfigFileForWordPress () {
+	local DOMAIN="example.com"
+	local SITE_CFG="/etc/apache2/sites_available/$DOMAIN.conf"
+
+	gaea-apache-cfg-copy "wordpress" "$DOMAIN"
+
+	assertTrue "[ -f $SITE_CFG ]"	
 }
 
 oneTimeTearDown () {
