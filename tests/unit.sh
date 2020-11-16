@@ -59,11 +59,24 @@ testCreatesDatabaseAndUser () {
 
 testCopiesApacheConfigFileForWordPress () {
 	local DOMAIN="example.com"
-	local SITE_CFG="/etc/apache2/sites_available/$DOMAIN.conf"
+	local SITE_CFG="/etc/apache2/sites-available/$DOMAIN.conf"
 
-	gaea-apache-cfg-copy "wordpress" "$DOMAIN"
+	gaea-apache-cfg-file 'wordpress' "$DOMAIN"
 
-	assertTrue "[ -f $SITE_CFG ]"	
+	assertTrue "[ -r $SITE_CFG ]"
+	sudo rm $SITE_CFG
+}
+
+testCreatesDocumentRoot () {
+	local DOMAIN="example.com"
+	local DIRECTORY="/srv/www/$DOMAIN"
+
+	gaea-docroot $DOMAIN
+
+	assertTrue "[ -d "$DIRECTORY" ]"
+
+	rmdir "$DIRECTORY"
+
 }
 
 oneTimeTearDown () {
@@ -72,6 +85,7 @@ oneTimeTearDown () {
 
 	mysql -u root -e "DROP DATABASE IF EXISTS $DB_NAME"
 	mysql -u root -e "DROP USER IF EXISTS $DB_USER@localhost"
+
 }
 
 # Load shUnit2
