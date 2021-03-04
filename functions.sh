@@ -124,6 +124,7 @@ gaea-wp-install () {
 	
 	# Download WordPress
 	sudo -u gabymg -i -- wp core download --locale=es_ES --path=/srv/www/$GAEA_DOMAIN
+	touch /srv/www/$GAEA_DOMAIN/.htaccess
 
 	# Create wp-config.php
 	sudo -u gabymg -i -- wp config create --dbname=$GAEA_DB_NAME --dbuser=$GAEA_DB_USER --dbpass=$GAEA_DB_USERPASS --locale=$GAEA_LOCALE --path=/srv/www/$GAEA_DOMAIN
