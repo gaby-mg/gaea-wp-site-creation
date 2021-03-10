@@ -91,7 +91,7 @@ gaea-docroot () {
 	local DIRECTORY="/srv/www/$GAEA_DOMAIN"
 	mkdir "$DIRECTORY"
 
-	echo "Hello, World!" > "$DIRECTORY/index.html"
+	echo "Hello, World!" >> "$DIRECTORY/index.html"
 
 	chown -R gabymg:gabymg $DIRECTORY
 }
@@ -117,7 +117,7 @@ gaea-wp-install () {
 	sudo chown -R gabymg:gabymg /srv/www/$GAEA_DOMAIN
 	
 	# Download WordPress
-	sudo -u gabymg -i -- wp core download --locale=es_ES --path=/srv/www/$GAEA_DOMAIN
+	sudo -u gabymg -i -- wp core download --locale=$GAEA_LOCALE --path=/srv/www/$GAEA_DOMAIN
 	touch /srv/www/$GAEA_DOMAIN/.htaccess
 
 	# Create wp-config.php
