@@ -1,9 +1,10 @@
 #! /bin/bash
 
+PROJECT_ROOT=$(dirname $(realpath $0))
 GAEA_ENVARS_FILE='/tmp/envars.txt'
 
 # Source functions file
-source "functions.sh"
+source "$PROJECT_ROOT/functions.sh"
 
 if [ -n "$1" ]; then
 	while [ -n "$1" ]; do
