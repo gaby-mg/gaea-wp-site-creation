@@ -53,7 +53,7 @@ gaea-db-create () {
 	mysql -u root -e "GRANT ALL ON $GAEA_DB_NAME.* TO '$GAEA_DB_USER'@'localhost' IDENTIFIED BY '$GAEA_DB_USERPASS'"
 }
 
-gaea-apache-wp-cfg-file () {
+gaea-apache-cfg-file-wp () {
 	local TMP_FILE='/tmp/gaea-apache-config.txt'
 	cat > $TMP_FILE <<-EOF
 	<VirtualHost *:80>
@@ -78,8 +78,8 @@ gaea-apache-cfg-file () {
 	local TMP_FILE='/tmp/gaea-apache-config.txt'
 
 	case "$1" in
-		'wordpress')
-			gaea-apache-wp-cfg-file
+		wordpress)
+			gaea-apache-cfg-file-wp
 			;;
 	esac
 

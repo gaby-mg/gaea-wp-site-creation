@@ -9,6 +9,8 @@ if [ -n "$1" ]; then
 	while [ -n "$1" ]; do
 		case "$1" in
 			create)
+				GAEA_DOMAIN="$2"
+
 				# Set environmental variables
 				echo "Setting environmental variables..."
 				gaea-db-new
@@ -16,7 +18,7 @@ if [ -n "$1" ]; then
 
 				# Set up Apache configuration file
 				echo "Setting up the Apache configuration file..."
-				gaea-apache-cfg-file 'wordpress'
+				gaea-apache-cfg-file wordpress
 
 				# Set up document root
 				echo "Setting up website document root..."
