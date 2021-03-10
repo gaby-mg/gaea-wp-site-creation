@@ -29,7 +29,7 @@ gaea-db-exists () {
 # Finds a unique database and password
 gaea-db-new () {
 	GAEA_DB_NAME="$( gaea-random-string 20 )"
-	GAEA_DB_USER="$GAEA_DB_NAME'_'$( gaea-random-string 10 )"
+	GAEA_DB_USER=$GAEA_DB_NAME'_'$( gaea-random-string 10 )
 	GAEA_DB_USERPASS="$( gaea-random-password 18 )"
 
 	while [ $( gaea-db-exists $DB_NAME ) ]
