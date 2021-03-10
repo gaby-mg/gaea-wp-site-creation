@@ -9,14 +9,10 @@ if [ -n "$1" ]; then
 	while [ -n "$1" ]; do
 		case "$1" in
 			create)
-				# Get environmental variables
-				echo "Getting environmental variables..."
-				gaea-db-new
-				gaea-wp-new
-
 				# Set environmental variables
 				echo "Setting environmental variables..."
-				gaea-set-envars "/tmp/envars.txt"
+				gaea-db-new
+				gaea-wp-new
 
 				# Set up Apache configuration file
 				echo "Setting up the Apache configuration file..."
@@ -39,6 +35,7 @@ if [ -n "$1" ]; then
 				echo "Installing WordPress..."
 				gaea-wp-install
 				;;
+
 			*) echo "Option not recognized"
 		esac
 

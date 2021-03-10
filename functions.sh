@@ -1,9 +1,3 @@
-# Sets Environment Variables from a Text File
-gaea-set-envars () {
-	source $1
-	export $(cut -d= -f1 $1)
-}
-
 # Creates a random alphanumric string of the given length
 gaea-random-string () {
 	CHARSET="a-zA-Z0-9"
