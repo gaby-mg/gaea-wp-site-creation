@@ -28,18 +28,18 @@ gaea-db-exists () {
 
 # Finds a unique database and password
 gaea-db-new () {
-	local DB_NAME="$( gaea-random-string 20 )"
-	local DB_USER="$( gaea-random-string 10 )"
-	local DB_USERPASS="$( gaea-random-password 18 )"
+	GAEA_DB_NAME="$( gaea-random-string 20 )"
+	GAEA_DB_USER="$GAEA_DB_NAME'_'$( gaea-random-string 10 )"
+	GAEA_DB_USERPASS="$( gaea-random-password 18 )"
 
 	while [ $( gaea-db-exists $DB_NAME ) ]
 	do
 		DB_NAME="$( gaea-random-string 20 )"
 	done
 
-	echo 'GAEA_DB_NAME="'$DB_NAME'"' >> "$GAEA_ENVARS_FILE"
-	echo 'GAEA_DB_USER="'$DB_NAME'_'$DB_USER'"' >> "$GAEA_ENVARS_FILE"
-	echo 'GAEA_DB_USERPASS="'$DB_USERPASS'"' >> "$GAEA_ENVARS_FILE"
+	echo 'GAEA_DB_NAME="'$GAEA_DB_NAME'"' >> "$GAEA_ENVARS_FILE"
+	echo 'GAEA_DB_USER="'$GAEA_DB_USER'"' >> "$GAEA_ENVARS_FILE"
+	echo 'GAEA_DB_USERPASS="'$GAEA_DB_USERPASS'"' >> "$GAEA_ENVARS_FILE"
 }
 
 
@@ -97,13 +97,13 @@ gaea-docroot () {
 }
 
 gaea-wp-new () {
-	local WP_ADMIN="$( gaea-random-string 8 )"
-	local WP_ADMIN_PASSWORD="$( gaea-random-password 18 )"
-	local WP_ADMIN_EMAIL='wordpress@gabymg.es'
+	GAEA_WP_ADMIN="$( gaea-random-string 8 )"
+	GAEA_WP_ADMIN_PASSWORD="$( gaea-random-password 18 )"
+	GAEA_WP_ADMIN_EMAIL='wordpress@gabymg.es'
 
-	echo 'GAEA_WP_ADMIN="'$WP_ADMIN'"' >> "$GAEA_ENVARS_FILE"
-	echo 'GAEA_WP_ADMIN_PASSWORD="'$WP_ADMIN_PASSWORD'"' >> "$GAEA_ENVARS_FILE"
-	echo 'GAEA_WP_ADMIN_EMAIL="'$WP_ADMIN_EMAIL'"' >> "$GAEA_ENVARS_FILE"
+	echo 'GAEA_WP_ADMIN="'$GAEA_WP_ADMIN'"' >> "$GAEA_ENVARS_FILE"
+	echo 'GAEA_WP_ADMIN_PASSWORD="'$GAEA_WP_ADMIN_PASSWORD'"' >> "$GAEA_ENVARS_FILE"
+	echo 'GAEA_WP_ADMIN_EMAIL="'$GAEA_WP_ADMIN_EMAIL'"' >> "$GAEA_ENVARS_FILE"
 }
 
 
