@@ -17,7 +17,6 @@ if [ -n "$1" ]; then
 	while [ -n "$1" ]; do
 		case "$1" in
 			create)
-
 				# Set environmental variables
 				echo "Setting environmental variables..."
 				gaea-db-new
@@ -74,9 +73,20 @@ if [ -n "$1" ]; then
 				gaea-db-dump $GAEA_DOMAIN
 				echo "Populating database..."
 				gaea-db-restore "stage.$GAEA_DOMAIN" $DB_BACKUP
-				;;
 
-			*) echo "Option not recognized"
+				# Change site config and URL
+				chown -R gabymg:gabymg /srv/www/stage.$GAEA_DOMAIN
+				cd /srv/www/stage.$GAEA_DOMAIN
+				echo "Creating new wp-config.php"
+				wp config create --dbname=$GAEA_DB_NAME --dbuser=$GAEA_DB_USER --dbpass=$GAEA_DB_USERPASS --force
+				echo "Changing site URL"
+				wp search-replace "$GAEA_DOMAIN" "stage.$GAEA_DOMAIN" --skip-columns=guid
+				wp option update home "http://stage.$GAEA_DOMAIN"
+				wp option update siteurl "http://stage.$GAEA_DOMAIN"
+				;;
+			*)
+				echo "Option not recognized"
+				;;
 		esac
 
 		shift
