@@ -7,10 +7,16 @@ GAEA_ENVARS_FILE='/tmp/envars.txt'
 source "$PROJECT_ROOT/functions.sh"
 
 if [ -n "$1" ]; then
+
+	if [ -n "$2" ]; then
+		GAEA_DOMAIN="$2"
+	else
+		echo "Domain name is missing"
+	fi
+
 	while [ -n "$1" ]; do
 		case "$1" in
 			create)
-				GAEA_DOMAIN="$2"
 
 				# Set environmental variables
 				echo "Setting environmental variables..."
@@ -19,13 +25,13 @@ if [ -n "$1" ]; then
 
 				# Set up Apache configuration file
 				echo "Setting up the Apache configuration file..."
-				gaea-apache-cfg-file wordpress
+				gaea-apache-cfg-file wordpress "test.$GAEA_DOMAIN"
 
 				# Set up document root
 				echo "Setting up website document root..."
-				gaea-docroot
+				gaea-docroot $GAEA_DOMAIN
 
-				# Start the web site
+				# Enable the web site
 				echo "Enabling the website..."
 				a2ensite --quiet $GAEA_DOMAIN.conf
 				systemctl reload apache2
@@ -38,6 +44,29 @@ if [ -n "$1" ]; then
 				echo "Installing WordPress..."
 				gaea-wp-install
 				;;
+			stage)
+				# Set environmental variables
+				echo "Setting environmental variables..."
+				gaea-db-new
+
+				# Set up Apache configuration file
+				echo "Setting up the Apache configuration file..."
+				gaea-apache-cfg stage $GAEA_DOMAIN
+
+				# Enable the web site
+				echo "Enabling the website..."
+				a2ensite --quiet "stage.$GAEA_DOMAIN.conf"
+				systemctl reload apache2
+
+				# Create the database
+				echo "Creating the database..."
+				gaea-db-create
+
+				# Migrate files and database
+				echo "Copying files"
+				cp -r "/srv/www/$GAEA_DOMAIN" "/srv/www/stage.$GAEA_DOMAIN"
+				echo "Dumping database"
+				gaea-db-dump $GAEA_DOMAIN
 
 			*) echo "Option not recognized"
 		esac

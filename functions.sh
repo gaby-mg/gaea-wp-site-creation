@@ -53,19 +53,43 @@ gaea-db-create () {
 	mysql -u root -e "GRANT ALL ON $GAEA_DB_NAME.* TO '$GAEA_DB_USER'@'localhost' IDENTIFIED BY '$GAEA_DB_USERPASS'"
 }
 
+gaea-db-dump () {
+	local SITE_ID=$(mysql -u root -e "SELECT site_id FROM gaea.gaea_sites WHERE domain=$1")
+	echo $SITE_ID
+}
+
 gaea-apache-cfg-file-wp () {
 	local TMP_FILE='/tmp/gaea-apache-config.txt'
 	cat > $TMP_FILE <<-EOF
 	<VirtualHost *:80>
-        	ServerName test.$GAEA_DOMAIN
+        	ServerName test.$1
 
         	ServerAdmin hosting@gabymg.es
-        	DocumentRoot /srv/www/$GAEA_DOMAIN
+        	DocumentRoot /srv/www/$1
         	ErrorLog \${APACHE_LOG_DIR}/error.log
         	CustomLog \${APACHE_LOG_DIR}/access.log combined
 
         	# Enable .htacces Overrides
-        	<Directory /srv/www/$GAEA_DOMAIN>
+        	<Directory /srv/www/$1>
+                	AllowOverride All
+        	</Directory>
+	</VirtualHost>
+	EOF
+}
+
+gaea-apache-cfg-file-stage () {
+	local TMP_FILE='/tmp/gaea-apache-config.txt'
+	cat > $TMP_FILE <<-EOF
+	<VirtualHost *:80
+        	ServerName $1
+
+        	ServerAdmin hosting@gabymg.es
+        	DocumentRoot /srv/www/$1
+        	ErrorLog \${APACHE_LOG_DIR}/error.log
+        	CustomLog \${APACHE_LOG_DIR}/access.log combined
+
+        	# Enable .htacces Overrides
+        	<Directory /srv/www/$1>
                 	AllowOverride All
         	</Directory>
 	</VirtualHost>
@@ -73,27 +97,40 @@ gaea-apache-cfg-file-wp () {
 }
 
 # Generates an Apache config file for a given domain
-gaea-apache-cfg-file () {
-	local APACHE_CONFIG_FILE="/etc/apache2/sites-available/$GAEA_DOMAIN.conf"
-	local TMP_FILE='/tmp/gaea-apache-config.txt'
+gaea-apache-cfg () {
+	if [ -n $1 ];
+	then
+		local APACHE_CONFIG_FILE="/etc/apache2/sites-available/$2.conf"
+		local TMP_FILE='/tmp/gaea-apache-config.txt'
 
-	case "$1" in
-		wordpress)
-			gaea-apache-cfg-file-wp
-			;;
-	esac
+		case "$1" in
+			test)
+				gaea-apache-cfg-file 'test' "$2"
+				;;
+			stage)
+				gaea-apache-cfg-file-stage "stage.$2"
+				;;
+		esac
 
-	cp "$TMP_FILE" "$APACHE_CONFIG_FILE"
-	rm $TMP_FILE
+		cp "$TMP_FILE" "$APACHE_CONFIG_FILE"
+		rm $TMP_FILE
+	else
+		echo "Missing type of configuration file"
+	fi
 }
 
 gaea-docroot () {
-	local DIRECTORY="/srv/www/$GAEA_DOMAIN"
-	mkdir "$DIRECTORY"
+	if [ -n $1 ];
+	then
+		local DIRECTORY="/srv/www/$1"
+		mkdir "$DIRECTORY"
 
-	echo "Hello, World!" >> "$DIRECTORY/index.html"
+		echo "Hello, World!" >> "$DIRECTORY/index.html"
 
-	chown -R gabymg:gabymg $DIRECTORY
+		chown -R gabymg:gabymg $DIRECTORY
+	else
+		echo "Missing domain name for site docroot"
+	fi
 }
 
 gaea-wp-new () {
@@ -109,7 +146,7 @@ gaea-wp-new () {
 
 gaea-wp-install () {
 
-	local GAEA_LOCALE='es_ES'
+	local GAEA_LOCALE=es_ES
 
 	rm /srv/www/$GAEA_DOMAIN/index.html
 
