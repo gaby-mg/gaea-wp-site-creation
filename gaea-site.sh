@@ -67,6 +67,7 @@ if [ -n "$1" ]; then
 				cp -r "/srv/www/$GAEA_DOMAIN" "/srv/www/stage.$GAEA_DOMAIN"
 				echo "Dumping database"
 				gaea-db-dump $GAEA_DOMAIN
+				;;
 
 			*) echo "Option not recognized"
 		esac

@@ -54,8 +54,11 @@ gaea-db-create () {
 }
 
 gaea-db-dump () {
-	local SITE_ID=$(mysql -u root -e "SELECT site_id FROM gaea.gaea_sites WHERE domain=$1")
-	echo $SITE_ID
+	local SITE_ID=$(mysql -u root -se "SELECT site_id FROM gaea.gaea_sites WHERE domain='$1';")
+	local DB_NAME=$(mysql -u root -se "SELECT db_name FROM gaea.gaea_databases WHERE site='$SITE_ID';")
+	local DB_USER=$(mysql -u root -se "SELECT db_user FROM gaea.gaea_databases WHERE site='$SITE_ID';")
+	local DB_USERPASS=$(mysql -u root -se "SELECT db_userpass FROM gaea.gaea_databases WHERE site='$SITE_ID';")
+	echo $SITE_ID $DB_NAME $DB_USER
 }
 
 gaea-apache-cfg-file-wp () {
