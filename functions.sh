@@ -73,7 +73,7 @@ gaea-db-restore () {
 	local DB_NAME=$(mysql -u root -se "SELECT db_name FROM gaea.gaea_databases WHERE site='$SITE_ID';")
 	local DB_USER=$(mysql -u root -se "SELECT db_user FROM gaea.gaea_databases WHERE site='$SITE_ID';")
 	local DB_USERPASS=$(mysql -u root -se "SELECT db_userpass FROM gaea.gaea_databases WHERE site='$SITE_ID';")
-	mysql -u "$DB_USER" -p "$DB_USERPASS" "$DB_NAME" < "$2"
+	mysql -u $DB_USER -p$DB_USERPASS $DB_NAME < $2
 }
 
 gaea-apache-cfg-file-wp () {
