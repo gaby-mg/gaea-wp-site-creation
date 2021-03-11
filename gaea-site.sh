@@ -78,11 +78,11 @@ if [ -n "$1" ]; then
 				chown -R gabymg:gabymg /srv/www/stage.$GAEA_DOMAIN
 				cd /srv/www/stage.$GAEA_DOMAIN
 				echo "Creating new wp-config.php"
-				wp config create --dbname=$GAEA_DB_NAME --dbuser=$GAEA_DB_USER --dbpass=$GAEA_DB_USERPASS --force
+				sudo -u gabymg -i -- wp config create --dbname=$GAEA_DB_NAME --dbuser=$GAEA_DB_USER --dbpass=$GAEA_DB_USERPASS --force
 				echo "Changing site URL"
-				wp search-replace "$GAEA_DOMAIN" "stage.$GAEA_DOMAIN" --skip-columns=guid
-				wp option update home "http://stage.$GAEA_DOMAIN"
-				wp option update siteurl "http://stage.$GAEA_DOMAIN"
+				sudo -u gabymg -i -- wp search-replace "$GAEA_DOMAIN" "stage.$GAEA_DOMAIN" --skip-columns=guid
+				sudo -u gabymg -i -- wp option update home "http://stage.$GAEA_DOMAIN"
+				sudo -u gabymg -i -- wp option update siteurl "http://stage.$GAEA_DOMAIN"
 				;;
 			*)
 				echo "Option not recognized"
