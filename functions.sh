@@ -58,7 +58,8 @@ gaea-db-dump () {
 	local DB_NAME=$(mysql -u root -se "SELECT db_name FROM gaea.gaea_databases WHERE site='$SITE_ID';")
 	local DB_USER=$(mysql -u root -se "SELECT db_user FROM gaea.gaea_databases WHERE site='$SITE_ID';")
 	local DB_USERPASS=$(mysql -u root -se "SELECT db_userpass FROM gaea.gaea_databases WHERE site='$SITE_ID';")
-	echo $SITE_ID $DB_NAME $DB_USER
+
+	mysqldump --user=$DB_USER --password=$DB_USERPASS $DB_NAME > /tmp/$DB_NAME.sql
 }
 
 gaea-apache-cfg-file-wp () {
