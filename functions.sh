@@ -152,7 +152,7 @@ gaea-docroot () {
 }
 
 gaea-site-register () {
-	mysql -u root -e "INSERT INTO gaea.gaea_sites(domain) VALUES ($1);"
+	mysql -u root -e "INSERT INTO gaea.gaea_sites(domain) VALUES ('$1');"
 }
 
 gaea-wp-new () {
