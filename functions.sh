@@ -98,7 +98,7 @@ gaea-apache-cfg-file-wp () {
 gaea-apache-cfg-file-stage () {
 	local TMP_FILE='/tmp/gaea-apache-config.txt'
 	cat > $TMP_FILE <<-EOF
-	<VirtualHost *:80
+	<VirtualHost *:80>
         	ServerName $1
 
         	ServerAdmin hosting@gabymg.es
