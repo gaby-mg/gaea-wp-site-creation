@@ -58,15 +58,22 @@ if [ -n "$1" ]; then
 				a2ensite --quiet "stage.$GAEA_DOMAIN.conf"
 				systemctl reload apache2
 
+				# Register the site
+				echo "Registering the site..."
+				gaea-site-register "stage.$GAEA_DOMAIN"
+
 				# Create the database
 				echo "Creating the database..."
 				gaea-db-create
+				gaea-db-register "stage.$GAEA_DOMAIN"
 
 				# Migrate files and database
-				echo "Copying files"
+				echo "Copying files..."
 				cp -r "/srv/www/$GAEA_DOMAIN" "/srv/www/stage.$GAEA_DOMAIN"
-				echo "Dumping database"
+				echo "Dumping database..."
 				gaea-db-dump $GAEA_DOMAIN
+				echo "Populating database..."
+				gaea-db-restore "stage.$GAEA_DOMAIN" $DB_BACKUP
 				;;
 
 			*) echo "Option not recognized"

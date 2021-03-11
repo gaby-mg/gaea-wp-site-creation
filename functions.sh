@@ -53,13 +53,27 @@ gaea-db-create () {
 	mysql -u root -e "GRANT ALL ON $GAEA_DB_NAME.* TO '$GAEA_DB_USER'@'localhost' IDENTIFIED BY '$GAEA_DB_USERPASS'"
 }
 
+gaea-db-register () {
+	local SITE_ID=$(mysql -u root -se "SELECT site_id FROM gaea.gaea_sites WHERE domain='$1';")
+	mysql -u root -e "INSERT INTO gaea_databases(db_name,db_user,db_userpass,site) VALUES ($GAEA_DB_NAME,$GAEA_DB_USER,$GAEA_DB_USERPASS,$SITE_ID);"
+}
+
 gaea-db-dump () {
 	local SITE_ID=$(mysql -u root -se "SELECT site_id FROM gaea.gaea_sites WHERE domain='$1';")
 	local DB_NAME=$(mysql -u root -se "SELECT db_name FROM gaea.gaea_databases WHERE site='$SITE_ID';")
 	local DB_USER=$(mysql -u root -se "SELECT db_user FROM gaea.gaea_databases WHERE site='$SITE_ID';")
 	local DB_USERPASS=$(mysql -u root -se "SELECT db_userpass FROM gaea.gaea_databases WHERE site='$SITE_ID';")
+	DB_BACKUP="/tmp/$DB_NAME.sql"
 
-	mysqldump --no-tablespaces --user=$DB_USER --password=$DB_USERPASS $DB_NAME > /tmp/$DB_NAME.sql
+	mysqldump --no-tablespaces --user=$DB_USER --password=$DB_USERPASS $DB_NAME > $DB_BACKUP
+}
+
+gaea-db-restore () {
+	local SITE_ID=$(mysql -u root -se "SELECT site_id FROM gaea.gaea_sites WHERE domain='$1';")
+	local DB_NAME=$(mysql -u root -se "SELECT db_name FROM gaea.gaea_databases WHERE site='$SITE_ID';")
+	local DB_USER=$(mysql -u root -se "SELECT db_user FROM gaea.gaea_databases WHERE site='$SITE_ID';")
+	local DB_USERPASS=$(mysql -u root -se "SELECT db_userpass FROM gaea.gaea_databases WHERE site='$SITE_ID';")
+	mysql -u $DB_USER -p $DB_USERPASS $DB_NAME < $2
 }
 
 gaea-apache-cfg-file-wp () {
@@ -135,6 +149,10 @@ gaea-docroot () {
 	else
 		echo "Missing domain name for site docroot"
 	fi
+}
+
+gaea-site-register () {
+	mysql -u root -e "INSERT INTO gaea_sites(domain) VALUES ($1);"
 }
 
 gaea-wp-new () {
