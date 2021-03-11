@@ -55,7 +55,7 @@ gaea-db-create () {
 
 gaea-db-register () {
 	local SITE_ID=$(mysql -u root -se "SELECT site_id FROM gaea.gaea_sites WHERE domain='$1';")
-	mysql -u root -e "INSERT INTO gaea_databases(db_name,db_user,db_userpass,site) VALUES ($GAEA_DB_NAME,$GAEA_DB_USER,$GAEA_DB_USERPASS,$SITE_ID);"
+	mysql -u root -e "INSERT INTO gaea.gaea_databases(db_name,db_user,db_userpass,site) VALUES ('$GAEA_DB_NAME','$GAEA_DB_USER','$GAEA_DB_USERPASS','$SITE_ID');"
 }
 
 gaea-db-dump () {
@@ -73,7 +73,7 @@ gaea-db-restore () {
 	local DB_NAME=$(mysql -u root -se "SELECT db_name FROM gaea.gaea_databases WHERE site='$SITE_ID';")
 	local DB_USER=$(mysql -u root -se "SELECT db_user FROM gaea.gaea_databases WHERE site='$SITE_ID';")
 	local DB_USERPASS=$(mysql -u root -se "SELECT db_userpass FROM gaea.gaea_databases WHERE site='$SITE_ID';")
-	mysql -u $DB_USER -p $DB_USERPASS $DB_NAME < $2
+	mysql -u $DB_USER -p "$DB_USERPASS" $DB_NAME < $2
 }
 
 gaea-apache-cfg-file-wp () {
@@ -118,14 +118,15 @@ gaea-apache-cfg-file-stage () {
 gaea-apache-cfg () {
 	if [ -n $1 ];
 	then
-		local APACHE_CONFIG_FILE="/etc/apache2/sites-available/$2.conf"
 		local TMP_FILE='/tmp/gaea-apache-config.txt'
 
 		case "$1" in
 			test)
+				local APACHE_CONFIG_FILE="/etc/apache2/sites-available/$2.conf"
 				gaea-apache-cfg-file 'test' "$2"
 				;;
 			stage)
+				local APACHE_CONFIG_FILE="/etc/apache2/sites-available/stage.$2.conf"
 				gaea-apache-cfg-file-stage "stage.$2"
 				;;
 		esac
