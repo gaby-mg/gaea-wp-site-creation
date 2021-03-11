@@ -73,6 +73,7 @@ if [ -n "$1" ]; then
 				gaea-db-dump $GAEA_DOMAIN
 				echo "Populating database..."
 				gaea-db-restore "stage.$GAEA_DOMAIN" $DB_BACKUP
+				rm $DB_BACKUP
 
 				# Change site config and URL
 				chown -R gabymg:gabymg /srv/www/stage.$GAEA_DOMAIN
@@ -83,6 +84,7 @@ if [ -n "$1" ]; then
 				sudo -u gabymg -i -- wp search-replace "www.$GAEA_DOMAIN" "stage.$GAEA_DOMAIN" --skip-columns=guid --path=/srv/www/stage.$GAEA_DOMAIN
 				sudo -u gabymg -i -- wp option update home "http://stage.$GAEA_DOMAIN" --path=/srv/www/stage.$GAEA_DOMAIN
 				sudo -u gabymg -i -- wp option update siteurl "http://stage.$GAEA_DOMAIN" --path=/srv/www/stage.$GAEA_DOMAIN
+				chown -R www-data:www-data /srv/www/stage.$GAEA_DOMAIN
 				;;
 			*)
 				echo "Option not recognized"
