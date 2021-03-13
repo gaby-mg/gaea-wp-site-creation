@@ -76,7 +76,7 @@ gaea-db-restore () {
 	mysql -u $DB_USER -p$DB_USERPASS $DB_NAME < $2
 }
 
-gaea-apache-cfg-file-wp () {
+gaea-apache-cfg-file-test () {
 	local TMP_FILE='/tmp/gaea-apache-config.txt'
 	cat > $TMP_FILE <<-EOF
 	<VirtualHost *:80>
@@ -121,9 +121,9 @@ gaea-apache-cfg () {
 		local TMP_FILE='/tmp/gaea-apache-config.txt'
 
 		case "$1" in
-			test)
+			testing)
 				local APACHE_CONFIG_FILE="/etc/apache2/sites-available/$2.conf"
-				gaea-apache-cfg-file 'test' "$2"
+				gaea-apache-cfg-file-test "$2"
 				;;
 			stage)
 				local APACHE_CONFIG_FILE="/etc/apache2/sites-available/stage.$2.conf"

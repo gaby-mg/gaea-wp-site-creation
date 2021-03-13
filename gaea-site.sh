@@ -24,7 +24,7 @@ if [ -n "$1" ]; then
 
 				# Set up Apache configuration file
 				echo "Setting up the Apache configuration file..."
-				gaea-apache-cfg-file wordpress "test.$GAEA_DOMAIN"
+				gaea-apache-cfg-file testing "test.$GAEA_DOMAIN"
 
 				# Set up document root
 				echo "Setting up website document root..."
@@ -35,9 +35,14 @@ if [ -n "$1" ]; then
 				a2ensite --quiet $GAEA_DOMAIN.conf
 				systemctl reload apache2
 
+				# Register the site
+				echo "Registering the site..."
+				gaea-site-register "$GAEA_DOMAIN"
+
 				# Create the database
 				echo "Creating the database..."
 				gaea-db-create
+				gaea-db-register $GAEA_DOMAIN
 
 				# Install WordPress
 				echo "Installing WordPress..."
