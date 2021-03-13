@@ -24,7 +24,7 @@ if [ -n "$1" ]; then
 
 				# Set up Apache configuration file
 				echo "Setting up the Apache configuration file..."
-				gaea-apache-cfg-file testing "test.$GAEA_DOMAIN"
+				gaea-apache-cfg testing "test.$GAEA_DOMAIN"
 
 				# Set up document root
 				echo "Setting up website document root..."
